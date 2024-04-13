@@ -22,19 +22,19 @@ public:
 		remaining = burst;
 	}
 
-	int at() {return arrival;}
-	int bt() {return burst;}
-	int pid() {return procid;}
-	int ct() {return completion;}
-	int tat() {return turnaround;}
-	int wt() {return waiting;}
-	int rem() {return remaining;}
-	int pty() {return priority;}
+	int at() 	{return arrival;}
+	int bt() 	{return burst;}
+	int pid() 	{return procid;}
+	int ct() 	{return completion;}
+	int tat() 	{return turnaround;}
+	int wt() 	{return waiting;}
+	int rem() 	{return remaining;}
+	int pty() 	{return priority;}
 
-	void setpid(int x) {procid = x;}
-	void setcompl(int x) {completion = x;}
-	void setrem(int x) {remaining = x;}
-	void setpty(int x) {priority = x;}
+	void setpid(int x) 		{procid = x;}
+	void setcompl(int x) 	{completion = x;}
+	void setrem(int x) 		{remaining = x;}
+	void setpty(int x) 		{priority = x;}
 
 	void calcnprint() {
 		turnaround = completion - arrival;
@@ -51,9 +51,8 @@ class Compare {
 public:
 	bool operator() (Task* a, Task* b) {
 		if (a->pty() == b->pty()) {
-			if (a->at() == b->at()) {
+			if (a->at() == b->at())
 				return a->pid() < b->pid();
-			}
 			else return a->at() < b->at();
 		}
 		else return a->pty() > b->pty();
@@ -63,9 +62,8 @@ public:
 int main() {
 	cout << "Please note tasks with lower \'priority\' value have higher priority." << endl;
 
-	int n;
 	cout << "Enter number of tasks: ";
-	cin >> n;
+	int n; cin >> n;
 
 	vector<Task> sorted (n);
 
