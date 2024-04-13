@@ -1,0 +1,135 @@
+
+/*
+ * SHORTEST REMAINING TIME FIRST (PREEMPTIVE)
+ *
+ * SUBMISSION BY ADITYA KUMAR
+ * 2K22/CO/26
+ * 
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Task {
+	int arrival, burst, procid,
+		completion, turnaround, waiting,
+		remaining;
+
+public:
+	Task() {
+		cout << "Enter arrival time and burst time: ";
+		cin >> arrival >> burst;
+		remaining = burst;
+	}
+
+	int at() 	{return arrival;}
+	int bt() 	{return burst;}
+	int pid() 	{return procid;}
+	int ct() 	{return completion;}
+	int tat() 	{return turnaround;}
+	int wt() 	{return waiting;}
+	int rem() 	{return remaining;}
+
+	void setpid(int x) 		{procid = x;}
+	void setcompl(int x) 	{completion = x;}
+	void setrem(int x) 		{remaining = x;}
+
+	void calcnprint() {
+		turnaround = completion - arrival;
+		waiting = turnaround - burst;
+
+		cout << "PID " << procid << ":\n"
+			<< " - Waiting time:    " << waiting << "\n"
+			<< " - Turnaround time: " << turnaround << "\n" << endl;
+	}
+};
+
+class Compare {
+public:
+	bool operator() (Task* a, Task* b) {
+		if (a->rem() == b->rem()) {
+			if (a->at() == b->at())
+				return a->pid() < b->pid();
+			else return a->at() < b->at();
+		}
+		else return a->rem() > b->rem();
+	}
+};
+
+int main() {
+	// cout << "Please note tasks with lower \'priority\' value have higher priority." << endl;
+
+	cout << "Enter number of tasks: ";
+	int n; cin >> n;
+
+	vector<Task> sorted (n);
+
+	for (int i=0; i<n; i++) {
+		Task& x = sorted[i];
+		x.setpid(i);
+	}
+
+	cout << "\n\n--------------------\nList of processes\n\n";
+	
+	for (auto x : sorted)
+		cout << x.pid() << ": " << x.at() << ' ' << x.bt() << endl;
+
+	sort (sorted.begin(), sorted.end(), [](Task& a, Task& b) {
+		if (a.at() == b.at()) {
+			return a.pid() < b.pid();
+		}
+		else return a.at() < b.at();
+	});
+	
+	cout << "\n\n--------------------\nTickwise schedule:\n\n";
+
+	int sortedptr = 0;
+	priority_queue<Task*, vector<Task*>, Compare> q;
+
+	int tick = 0;
+	while (sortedptr != n || q.size()) {
+		if (sorted[sortedptr].at() == tick) q.push(&(sorted[sortedptr++]));
+
+		if (q.size() == 0) {
+			cout << "Tick " << tick++ << "\t: IDLE\n";
+			continue;
+		}
+
+		Task* current = q.top();
+		if (current->at() > tick) {
+			cout << "Tick " << tick++ << "\t: IDLE\n";
+			continue;
+		}
+
+		current->setrem(current->rem()-1);
+		cout << "Tick " << tick++ << "\t: EXEC PID " << current->pid() << " [RT: " << current->rem() << "]" << endl;
+
+		q.pop();
+		if (current->rem() == 0)
+			current->setcompl(tick);
+		else q.push(current);
+
+		while (sortedptr < n && sorted[sortedptr].at() <= tick) q.push(&(sorted[sortedptr++]));
+	}
+
+	cout << "\n\n--------------------\nProcess-wise Report:\n\n";
+
+	sort (sorted.begin(), sorted.end(), [](Task& a, Task& b) {
+		return a.pid() < b.pid();
+	});
+
+	double avgtat = 0, avgwt = 0;
+	for (auto x : sorted) {
+		x.calcnprint();
+		avgtat += x.tat();
+		avgwt += x.wt();
+	}
+
+	cout << "\n\n--------------------\nStatistics Report:\n\n";
+
+	cout<< " - Processes executed:      " << n << endl
+		<< " - Average turnaround time: " << avgtat/n << endl
+		<< " - Average waiting time:    " << avgwt/n << endl;
+	
+	cout << "\n\n\n";
+}
