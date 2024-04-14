@@ -1,17 +1,27 @@
+
+/*
+ * DEMONSTRATION OF BANKER'S ALGORITHM
+ *
+ * SUBMISSION BY ADITYA KUMAR
+ * 2K22/CO/26
+ * 
+*/
+
 #include <iostream>
 #include <vector>
 #include <string>
+using namespace std;
 
 class Process {
 public:
-    std::vector<int> allocation;
-    std::vector<int> max_demand;
-    std::vector<int> need;
+    vector<int> allocation;
+    vector<int> max_demand;
+    vector<int> need;
 
     Process(int resource_count) : allocation(resource_count), max_demand(resource_count), need(resource_count) {}
 };
 
-void calculateNeed(std::vector<Process>& processes) {
+void calculateNeed(vector<Process>& processes) {
     for (auto& process : processes) {
         for (size_t i = 0; i < process.need.size(); i++) {
             process.need[i] = process.max_demand[i] - process.allocation[i];
@@ -19,9 +29,9 @@ void calculateNeed(std::vector<Process>& processes) {
     }
 }
 
-bool isSafe(const std::vector<Process>& processes, const std::vector<int>& available, std::vector<int>& safeSequence) {
-    std::vector<bool> finished(processes.size(), false);
-    std::vector<int> work = available;
+bool isSafe(const vector<Process>& processes, const vector<int>& available, vector<int>& safeSequence) {
+    vector<bool> finished(processes.size(), false);
+    vector<int> work = available;
     bool safe = false;
 
     while (true) {
@@ -58,43 +68,43 @@ bool isSafe(const std::vector<Process>& processes, const std::vector<int>& avail
 
 int main() {
     int num_processes, num_resources;
-    std::cout << "Enter number of processes: ";
-    std::cin >> num_processes;
-    std::cout << "Enter number of resources: ";
-    std::cin >> num_resources;
+    cout << "Enter number of processes: ";
+    cin >> num_processes;
+    cout << "Enter number of resources: ";
+    cin >> num_resources;
 
-    std::vector<Process> processes(num_processes, Process(num_resources));
-    std::vector<int> available(num_resources);
+    vector<Process> processes(num_processes, Process(num_resources));
+    vector<int> available(num_resources);
 
-    std::cout << "Enter available resources: ";
+    cout << "Enter available resources: ";
     for (int& a : available) {
-        std::cin >> a;
+        cin >> a;
     }
 
     for (int i = 0; i < num_processes; i++) {
-        std::cout << "Enter allocation and max demand for Process " << i << ":\n";
-        std::cout << "Allocation: ";
+        cout << "Enter allocation and max demand for Process " << i << ":\n";
+        cout << "Allocation: ";
         for (int& alloc : processes[i].allocation) {
-            std::cin >> alloc;
+            cin >> alloc;
         }
-        std::cout << "Max Demand: ";
+        cout << "Max Demand: ";
         for (int& max : processes[i].max_demand) {
-            std::cin >> max;
+            cin >> max;
         }
     }
 
     calculateNeed(processes);
 
-    std::vector<int> safeSequence;
+    vector<int> safeSequence;
     if (isSafe(processes, available, safeSequence)) {
-        std::cout << "The system is in a safe state.\n";
-        std::cout << "Safe sequence is: ";
+        cout << "The system is in a safe state.\n";
+        cout << "Safe sequence is: ";
         for (int id : safeSequence) {
-            std::cout << "P" << id << " ";
+            cout << "P" << id << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     } else {
-        std::cout << "No safe sequence found. The system is not in a safe state.\n";
+        cout << "No safe sequence found. The system is not in a safe state.\n";
     }
 
     return 0;
